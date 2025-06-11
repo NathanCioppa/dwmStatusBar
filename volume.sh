@@ -3,5 +3,7 @@
 tmpVolume="/tmp/statusBarVolume"
 
 get_volume() {
-	printf "test" > "$tmpVolume"
+	defaultSink="$(pactl get-default-sink)"
+	volumePercent="$(pactl get-sink-volume "$defaultSink" | grep "Volume:" | awk '{print $5}')"
+	printf "$volumePercent" > "$tmpVolume"
 }
