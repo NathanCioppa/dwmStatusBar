@@ -1,3 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-printf "$(date '+%-m/%-d %-l:%M%#p')"
+get_time() {
+	printf "$(date '+%-m/%-d %-l:%M%#p')"
+}
