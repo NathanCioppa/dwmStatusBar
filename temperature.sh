@@ -6,9 +6,11 @@ get_temperature() {
 	cpuTemp=$(($(cat /sys/class/thermal/thermal_zone1/temp) / 1000))
 	
 	if [[ $cpuTemp -ge 90 ]]; then
-		warning=" **"
+		warning="**"
 	elif [[ $cpuTemp -ge 70 ]]; then
-		warning=" *"
+		warning="*"
+	else 
+		warning=""
 	fi
 	
 	echo -e "$cpuTemp°C$warning" > "$tmpTemperature"

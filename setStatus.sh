@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 parentPID=$1
-FIFO="/tmp/statusBarEvents"
-	[ -p "$FIFO" ] || mkfifo "$FIFO"
+FIFO=/tmp/statusBarEvents
+[ -p "$FIFO" ] || mkfifo "$FIFO"
 DIR="$(cd "$(dirname "$0")" && pwd)"
 
 tick=0
@@ -11,16 +11,28 @@ memoryDelay=30
 internetDelay=5
 temperatureDelay=5
 
+source "$DIR/time.sh"
+source "$DIR/internet.sh"
+source "$DIR/temperature.sh"
+source "$DIR/memory.sh"
+source "$DIR/volume.sh"
+get_volume
 set_display() {
+	clock="$(cat "$tmpTime")"
+	memory="$(cat "$tmpMemory")"
+	internet=$(cat "$tmpInternet")
+	temperature=$(cat "$tmpTemperature")
+	volume="$(cat "$tmpVolume")"
+
 	xsetroot -name " CPU: $temperature | RAM: $memory | $internet | $volume | $clock "
 }
 
 event_listener() {
-	$DIR/audioMixerEvents.sh "$FIFO" &
+	"$DIR/audioMixerEvents.sh" "$FIFO" &
 	while kill -0 "$parentPID" 2>/dev/null; do 
 		read event < "$FIFO"
 		case "$event" in 
-			audioMixer) volume="test" ;;
+			audioMixer) get_volume ;;
 		esac
 		set_display
 	done
@@ -33,18 +45,18 @@ while kill -0 "$parentPID" 2>/dev/null; do
 		tick=0
 	fi
 
-	clock="$($DIR/time.sh)"
+	get_time
 
 	if [ $(($tick % $memoryDelay)) -eq 0 ]; then
-		memory="$($DIR/memory.sh)"
+		get_memory
 	fi
 
 	if [ $(($tick % $internetDelay)) -eq 0 ]; then
-		internet=$($DIR/internet.sh)
+		get_internet
 	fi
 
 	if [ $(($tick % temperatureDelay)) -eq 0 ]; then
-		temperature=$($DIR/temperature.sh)
+		get_temperature
 	fi
 
 	set_display
