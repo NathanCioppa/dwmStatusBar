@@ -1,7 +1,6 @@
 #!/bin/bash
 
 tmpMemory="/tmp/statusBarMemory"
-[[ -p "$tmpMemory" ]] || mkfifo "$tmpMemory"
 memTotal="$(grep MemTotal: /proc/meminfo | awk '{print $2}')"
 memTotal=$(echo "scale=1; $memTotal / 1048576" | bc -l)
 

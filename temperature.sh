@@ -1,7 +1,6 @@
 #!/bin/bash
 
 tmpTemperature="/tmp/temperature"
-[[ -p "$tmpTemperature" ]] || mkfifo "$tmpTemperature"
 
 get_temperature() {
 	cpuTemp=$(($(cat /sys/class/thermal/thermal_zone1/temp) / 1000))

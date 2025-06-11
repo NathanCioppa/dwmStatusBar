@@ -1,7 +1,6 @@
 #!/bin/bash
 
 tmpInternet="/tmp/statusBarInternet"
-[[ -p "$tmpInternet" ]] || mkfifo "$tmpInternet"
 
 unit="dBm"
 sigBest=65
