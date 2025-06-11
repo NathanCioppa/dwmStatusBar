@@ -1,12 +1,15 @@
 #!/bin/bash
 
+tmpMemory="/tmp/statusBarMemory"
+[[ -p "$tmpMemory" ]] || mkfifo "$tmpMemory"
 memTotal="$(grep MemTotal: /proc/meminfo | awk '{print $2}')"
-memAvailable="$(grep MemAvailable: /proc/meminfo | awk '{print $2}')"
-memUsed=$((memTotal - memAvailable))
 memTotal=$(echo "scale=1; $memTotal / 1048576" | bc -l)
-memUsed=$(echo "scale=1; $memUsed / 1048576" | bc -l)
 
 get_memory() {
-	printf "$memUsed/$memTotal GB"
+	memAvailable="$(grep MemAvailable: /proc/meminfo | awk '{print $2}')"
+	memUsed=$((memTotal - memAvailable))
+	memUsed=$(echo "scale=1; $memUsed / 1048576" | bc -l)
+	
+	printf "$memUsed/$memTotal GB" > "$tmpMemory"
 }
 
