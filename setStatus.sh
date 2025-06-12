@@ -16,15 +16,16 @@ source "$DIR/internet.sh"
 source "$DIR/temperature.sh"
 source "$DIR/memory.sh"
 source "$DIR/volume.sh"
-get_volume
+write_volume # initialize now, it wont be initialized by the loop
+
 set_display() {
 	clock="$(cat "$tmpTime")"
 	memory="$(cat "$tmpMemory")"
 	internet=$(cat "$tmpInternet")
 	temperature=$(cat "$tmpTemperature")
-	volume="$(cat "$tmpVolume")"
+	volume="$(get_volume)"
 
-	xsetroot -name " CPU: $temperature | RAM: $memory | $internet | $volume | $clock "
+	xsetroot -name " $temperature | $memory | $volume | $internet | $clock "
 }
 
 event_listener() {
@@ -32,7 +33,7 @@ event_listener() {
 	while kill -0 "$parentPID" 2>/dev/null; do 
 		read event < "$FIFO"
 		case "$event" in 
-			audioMixer) get_volume ;;
+			audioMixer) write_volume ;;
 		esac
 		set_display
 	done
