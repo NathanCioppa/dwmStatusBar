@@ -30,7 +30,9 @@ get_volume() {
 	for ((i = tens; i < 10; i++)) do
 		volumeDisplay+="~"
 	done
-	if [ "$volume" -lt 100]; then
+	if [ "$volume" -lt 10 ]; then
+		volume="  $volume"
+	elif [ "$volume" -lt 100 ]; then
 		volume=" $volume"
 	fi
 	echo "$volumeDisplay $volume%"
