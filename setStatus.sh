@@ -19,17 +19,17 @@ source "$DIR/volume.sh"
 write_volume # initialize now, it wont be initialized by the loop
 
 set_display() {
-	clock="$(cat "$tmpTime")"
-	memory="$(cat "$tmpMemory")"
-	internet=$(cat "$tmpInternet")
-	temperature=$(cat "$tmpTemperature")
+	clock="$(get_time)"
+	memory="$(get_memory)"
+	internet="$(get_internet)"
+	temperature="$(get_temperature)"
 	volume="$(get_volume)"
 
 	xsetroot -name " $temperature | $memory | $volume | $internet | $clock "
 }
 
 event_listener() {
-	"$DIR/audioMixerEvents.sh" "$FIFO" &
+	"$DIR/audioEvents.sh" "$FIFO" &
 	while kill -0 "$parentPID" 2>/dev/null; do 
 		read event < "$FIFO"
 		case "$event" in 
@@ -46,18 +46,18 @@ while kill -0 "$parentPID" 2>/dev/null; do
 		tick=0
 	fi
 
-	get_time
+	write_time
 
 	if [ $(($tick % $memoryDelay)) -eq 0 ]; then
-		get_memory
+		write_memory
 	fi
 
 	if [ $(($tick % $internetDelay)) -eq 0 ]; then
-		get_internet
+		write_internet
 	fi
 
 	if [ $(($tick % temperatureDelay)) -eq 0 ]; then
-		get_temperature
+		write_temperature
 	fi
 
 	set_display
