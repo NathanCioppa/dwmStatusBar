@@ -30,7 +30,7 @@ set_display() {
 
 event_listener() {
 	"$DIR/audioEvents.sh" "$FIFO" &
-	while kill -0 "$parentPID" 2>/dev/null; do 
+	while kill -0 "$parentPID" 2>/dev/null; do
 		read event < "$FIFO"
 		case "$event" in 
 			audioMixer) write_volume ;;
